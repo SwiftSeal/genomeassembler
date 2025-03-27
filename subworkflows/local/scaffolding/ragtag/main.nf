@@ -6,7 +6,8 @@ include { RUN_LIFTOFF } from '../../liftoff/main'
 workflow RUN_RAGTAG {
     take:
     inputs
-    in_reads
+    ont_reads
+    hifi_reads
     assembly
     references
     ch_aln_to_ref
@@ -29,7 +30,7 @@ workflow RUN_RAGTAG {
 
     ch_versions = ch_versions.mix(RAGTAG_SCAFFOLD.out.versions)
 
-    QC(inputs, in_reads, ragtag_scaffold_fasta, ch_aln_to_ref, meryl_kmers)
+    QC(inputs, ont_reads, hifi_reads, ragtag_scaffold_fasta, ch_aln_to_ref, meryl_kmers)
 
     ch_versions = ch_versions.mix(QC.out.versions)
 
