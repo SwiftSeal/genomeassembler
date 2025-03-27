@@ -5,7 +5,8 @@ include { RUN_RAGTAG } from './ragtag/main'
 workflow SCAFFOLD {
     take:
     inputs
-    in_reads
+    ont_reads
+    hifi_reads
     assembly
     references
     ch_aln_to_ref
@@ -25,7 +26,7 @@ workflow SCAFFOLD {
     Channel.empty().set { ragtag_merqury }
 
     if (params.scaffold_links) {
-        RUN_LINKS(inputs, in_reads, assembly, references, ch_aln_to_ref, meryl_kmers)
+        RUN_LINKS(inputs, ont_reads, hifi_reads, assembly, references, ch_aln_to_ref, meryl_kmers)
         RUN_LINKS.out.busco_out.set { links_busco }
         RUN_LINKS.out.quast_out.set { links_quast }
         RUN_LINKS.out.merqury_report_files.set { links_merqury }
@@ -34,7 +35,7 @@ workflow SCAFFOLD {
     }
 
     if (params.scaffold_longstitch) {
-        RUN_LONGSTITCH(inputs, in_reads, assembly, references, ch_aln_to_ref, meryl_kmers, genome_size)
+        RUN_LONGSTITCH(inputs, ont_reads, hifi_reads, assembly, references, ch_aln_to_ref, meryl_kmers, genome_size)
         RUN_LONGSTITCH.out.busco_out.set { longstitch_busco }
         RUN_LONGSTITCH.out.quast_out.set { longstitch_quast }
         RUN_LONGSTITCH.out.merqury_report_files.set { longstitch_merqury }
@@ -43,7 +44,7 @@ workflow SCAFFOLD {
     }
 
     if (params.scaffold_ragtag) {
-        RUN_RAGTAG(inputs, in_reads, assembly, references, ch_aln_to_ref, meryl_kmers)
+        RUN_RAGTAG(inputs, ont_reads, hifi_reads, assembly, references, ch_aln_to_ref, meryl_kmers)
         RUN_RAGTAG.out.busco_out.set { ragtag_busco }
         RUN_RAGTAG.out.quast_out.set { ragtag_quast }
         RUN_RAGTAG.out.merqury_report_files.set { ragtag_merqury }
