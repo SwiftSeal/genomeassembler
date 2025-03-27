@@ -2,7 +2,7 @@ include { FLYE } from '../../../modules/nf-core/flye/main'
 include { HIFIASM } from '../../../modules/nf-core/hifiasm/main'
 include { HIFIASM as HIFIASM_ONT } from '../../../modules/nf-core/hifiasm/main'
 include { GFA_2_FA } from '../../../modules/local/gfa2fa/main'
-include { MAP_TO_REF } from '../mapping/map_to_ref/main'
+include { MINIMAP2_ALIGN as MINIMAP2_REF } from '../../../modules/nf-core/minimap2/align/main'
 include { RUN_LIFTOFF } from '../liftoff/main'
 include { RAGTAG_SCAFFOLD } from '../../../modules/local/ragtag/main'
 include { QC } from '../qc/main'
@@ -169,16 +169,20 @@ workflow ASSEMBLE {
 
         if (params.quast) {
             if (params.use_ref) {
-                MAP_TO_REF(longreads, ch_refs)
+                if (params.qc_reads == "HIFI") {
+                    MINIMAP2_REF(hifi_reads.join(ch_refs), true, 'bai', false, false)
+                } else if (params.qc_reads == "ONT") {
+                    MINIMAP2_REF(ont_reads.join(ch_refs), true, 'bai', false, false)
+                }
 
-                MAP_TO_REF.out.ch_aln_to_ref_bam.set { ch_ref_bam }
+                MINIMAP2_REF.out.bam.set { ch_ref_bam }
             }
         }
     }
     /*
     QC on initial assembly
     */
-    QC(ch_input, longreads, ch_assembly, ch_ref_bam, meryl_kmers)
+    QC(ch_input, ont_reads, hifi_reads, ch_assembly, ch_ref_bam, meryl_kmers)
     ch_versions = ch_versions.mix(QC.out.versions)
 
     if (params.lift_annotations) {
@@ -189,7 +193,6 @@ workflow ASSEMBLE {
     emit:
     assembly                    = ch_assembly
     ref_bam                     = ch_ref_bam
-    longreads
     assembly_quast_reports      = QC.out.quast_out
     assembly_busco_reports      = QC.out.busco_out
     assembly_merqury_reports    = QC.out.merqury_report_files
