@@ -8,7 +8,7 @@ process GCI {
     tuple val(meta), path(scaffolds), path(minimap2_ont_bam), path(winnowmap_ont_bam), path(minimap2_hifi_bam), path(winnowmap_hifi_bam)
 
     output:
-    path val(meta), path("*.gci")              , emit: gci
+    tuple val(meta), path("*.gci")              , emit: gci
     path  "versions.yml"                       , emit: versions
 
     when:
