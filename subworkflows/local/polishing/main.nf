@@ -43,17 +43,8 @@ workflow POLISH {
     /*
     Polishing with short reads using pilon
     */
-
-    if (params.qc_reads == "ONT") {
-        ch_ont_reads
-            .set { qc_reads }
-    } else if (params.qc_reads == "HIFI") {
-        ch_hifi_reads
-            .set { qc_reads }
-    }
-
     if (params.polish_pilon) {
-        POLISH_PILON(inputs, ch_shortreads, qc_reads, ch_polished_genome, reference_bam, meryl_kmers)
+        POLISH_PILON(inputs, ch_ont_reads, ch_hifi_reads, ch_shortreads, ch_polished_genome, reference_bam, meryl_kmers)
 
         POLISH_PILON.out.pilon_polished.set { ch_polished_genome }
 
