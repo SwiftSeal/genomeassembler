@@ -16,38 +16,22 @@ process GCI {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def hifi_mappings = ((minimap2_hifi_bam) && (winnowmap_hifi_bam)) ? "--hifi $minimap2_hifi_bam $winnowmap_hifi_bam " : ""
+    def ont_mappings = ((minimap2_ont_bam) && (winnowmap_ont_bam)) ? "--ont $minimap2_ont_bam $winnowmap_ont_bam" : ""
 
-    if ((minimap2_hifi_bam) && (winnowmap_hifi_bam) && (minimap2_ont_bam) && (winnowmap_ont_bam)) {
-        """
-        python GCI.py \\
-            -r $scaffolds \\
-            --hifi $minimap2_hifi_bam $winnowmap_hifi_bam \\
-            --ont $minimap2_ont_bam $winnowmap_ont_bam \\
-            -t $task.cpus \\
-            -o {$prefix}
-        """
-    } else if ((minimap2_hifi_bam) && (winnowmap_hifi_bam)) {
-        """
-        python GCI.py \\
-            -r $scaffolds \\
-            --hifi $minimap2_hifi_bam $winnowmap_hifi_bam \\
-            -t $task.cpus \\
-            -o {$prefix}
-        """
-    } else if ((minimap2_ont_bam) && (winnowmap_ont_bam)) {
-        """
-        python GCI.py \\
-            -r $scaffolds \\
-            --ont $minimap2_ont_bam $winnowmap_ont_bam \\
-            -t $task.cpus \\
-            -o {$prefix}
-        """
-    }
+    """
+    python GCI.py \\
+        -r $scaffolds \\
+        $hifi_mappings \\
+        $ont_mappings \\
+        -t $task.cpus \\
+        -o ${prefix}
+    """
 
     stub:
         def prefix = task.ext.prefix ?: "${meta.id}"
         """
-        touch GCI.gci
+        touch ${prefix}.gci
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":

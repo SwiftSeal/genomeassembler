@@ -77,7 +77,7 @@ workflow QC {
                 .join(minimap2_ont_aln)
                 .join(winnowmap_ont_aln)
                 .join(minimap2_hifi_aln)
-                .join(minimap2_ont_aln)
+                .join(winnowmap_hifi_aln)
                 .set { gci_input }
             GCI(gci_input)
         }
