@@ -27,7 +27,7 @@ workflow POLISH {
             error('Medaka should not be used on HiFi assemblies')
         }
 
-        POLISH_MEDAKA(inputs, ch_ont_reads, ch_polished_genome, reference_bam, meryl_kmers)
+        POLISH_MEDAKA(inputs, ch_ont_reads, ch_hifi_reads, ch_polished_genome, reference_bam, meryl_kmers)
 
         POLISH_MEDAKA.out.polished_assembly.set { ch_polished_genome }
 

@@ -5,7 +5,8 @@ include { RUN_LIFTOFF } from '../../../liftoff/main'
 workflow POLISH_MEDAKA {
     take:
     ch_input
-    in_reads
+    ont_reads
+    hifi_reads
     assembly
     ch_aln_to_ref
     meryl_kmers
@@ -16,12 +17,12 @@ workflow POLISH_MEDAKA {
     Channel.empty().set { busco_out }
     Channel.empty().set { merqury_report_files }
 
-    RUN_MEDAKA(in_reads, assembly)
+    RUN_MEDAKA(ont_reads, assembly)
     RUN_MEDAKA.out.medaka_out.set { polished_assembly }
 
     ch_versions = ch_versions.mix(RUN_MEDAKA.out.versions)
 
-    QC(ch_input, in_reads, polished_assembly, ch_aln_to_ref, meryl_kmers)
+    QC(ch_input, ont_reads, hifi_reads, polished_assembly, ch_aln_to_ref, meryl_kmers)
 
     ch_versions = ch_versions.mix(QC.out.versions)
 
