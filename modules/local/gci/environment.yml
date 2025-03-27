@@ -1,0 +1,9 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - conda-forge::python>=3.10
+  - bioconda::pysam>=0.21.0
+  - bioconda::biopython
+  - bioconda::numpy
+  - bioconda::matplotlib
