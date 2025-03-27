@@ -5,7 +5,8 @@ include { RUN_LIFTOFF } from '../../liftoff/main'
 workflow RUN_LINKS {
     take:
     inputs
-    in_reads
+    ont_reads
+    hifi_reads
     assembly
     _references
     ch_aln_to_ref
@@ -14,16 +15,17 @@ workflow RUN_LINKS {
     main:
     Channel.empty().set { ch_versions }
 
-    assembly
-        .join(in_reads)
-        .set { links_in }
-
-    LINKS(links_in)
+    if (params.qc_reads == "ONT") {
+        LINKS(assembly.join(ont_reads))
+    } else if (params.qc_reads == "HIFI") {
+        LINKS(assembly.join(hifi_reads))
+    }
+    
     LINKS.out.scaffolds.set { scaffolds }
 
     ch_versions = ch_versions.mix(LINKS.out.versions)
 
-    QC(inputs, in_reads, scaffolds, ch_aln_to_ref, meryl_kmers)
+    QC(inputs, ont_reads, hifi_reads, scaffolds, ch_aln_to_ref, meryl_kmers)
 
     ch_versions = ch_versions.mix(QC.out.versions)
 
