@@ -128,13 +128,12 @@ workflow GENOMEASSEMBLER {
     ASSEMBLE(ch_ont_reads, ch_hifi_reads, ch_input, genome_size, meryl_kmers)
     ASSEMBLE.out.assembly.set { ch_polished_genome }
     ASSEMBLE.out.ref_bam.set { ch_ref_bam }
-    ASSEMBLE.out.longreads.set { ch_longreads }
     ch_versions = ch_versions.mix(ASSEMBLE.out.versions)
     /*
     Polishing
     */
 
-    POLISH(ch_input, ch_ont_reads, ch_longreads, ch_shortreads, ch_polished_genome, ch_ref_bam, meryl_kmers)
+    POLISH(ch_input, ch_ont_reads, ch_hifi_reads, ch_shortreads, ch_polished_genome, ch_ref_bam, meryl_kmers)
     POLISH.out.ch_polished_genome.set { ch_polished_genome }
 
     ch_versions = ch_versions.mix(POLISH.out.versions)
@@ -142,7 +141,7 @@ workflow GENOMEASSEMBLER {
     /*
     Scaffolding
     */
-    SCAFFOLD(ch_input, ch_longreads, ch_polished_genome, ch_refs, ch_ref_bam, meryl_kmers, genome_size)
+    SCAFFOLD(ch_input, ch_ont_reads, ch_hifi_reads, ch_polished_genome, ch_refs, ch_ref_bam, meryl_kmers, genome_size)
 
     ch_versions = ch_versions.mix(SCAFFOLD.out.versions)
 
