@@ -373,6 +373,11 @@
                     "type": "boolean",
                     "description": "Run quast",
                     "default": true
+                },
+                "gci": {
+                    "type": "boolean",
+                    "description": "Run GCI",
+                    "default": true
                 }
             }
         },
