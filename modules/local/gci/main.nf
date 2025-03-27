@@ -25,8 +25,23 @@ process GCI {
             --ont $minimap2_ont_bam $winnowmap_ont_bam \\
             -t $task.cpus
         """
+    } else if ((minimap2_hifi_bam) && (winnowmap_hifi_bam)) {
+        """
+        python GCI.py \\
+            -r $scaffolds \\
+            --hifi $minimap2_hifi_bam $winnowmap_hifi_bam \\
+            -t $task.cpus
+        """
+    } else if ((minimap2_ont_bam) && (winnowmap_ont_bam)) {
+        """
+        python GCI.py \\
+            -r $scaffolds \\
+            --ont $minimap2_ont_bam $winnowmap_ont_bam \\
+            -t $task.cpus
+        """
     }
-        stub:
+
+    stub:
         def prefix = task.ext.prefix ?: "${meta.id}"
         """
         touch GCI.gci
