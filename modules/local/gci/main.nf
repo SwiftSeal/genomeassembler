@@ -23,21 +23,24 @@ process GCI {
             -r $scaffolds \\
             --hifi $minimap2_hifi_bam $winnowmap_hifi_bam \\
             --ont $minimap2_ont_bam $winnowmap_ont_bam \\
-            -t $task.cpus
+            -t $task.cpus \\
+            -o {$prefix}
         """
     } else if ((minimap2_hifi_bam) && (winnowmap_hifi_bam)) {
         """
         python GCI.py \\
             -r $scaffolds \\
             --hifi $minimap2_hifi_bam $winnowmap_hifi_bam \\
-            -t $task.cpus
+            -t $task.cpus \\
+            -o {$prefix}
         """
     } else if ((minimap2_ont_bam) && (winnowmap_ont_bam)) {
         """
         python GCI.py \\
             -r $scaffolds \\
             --ont $minimap2_ont_bam $winnowmap_ont_bam \\
-            -t $task.cpus
+            -t $task.cpus \\
+            -o {$prefix}
         """
     }
 
