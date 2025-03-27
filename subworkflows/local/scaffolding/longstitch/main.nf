@@ -5,7 +5,8 @@ include { RUN_LIFTOFF } from '../../liftoff/main'
 workflow RUN_LONGSTITCH {
     take:
     inputs
-    in_reads
+    ont_reads
+    hifi_reads
     assembly
     _references
     ch_aln_to_ref
@@ -15,17 +16,25 @@ workflow RUN_LONGSTITCH {
     main:
     Channel.empty().set { ch_versions }
 
-    assembly
-        .join(in_reads)
-        .join(genome_size)
-        .set { longstitch_in }
+    if (params.qc_reads == "ONT") {
+        assembly
+            .join(ont_reads)
+            .join(genome_size)
+            .set { longstitch_in }
+    } else if (params.qc_reads == "HIFI") {
+        assembly
+            .join(hifi_reads)
+            .join(genome_size)
+            .set { longstitch_in }
+    }
+
     LONGSTITCH(longstitch_in)
 
     LONGSTITCH.out.ntlLinks_arks_scaffolds.set { scaffolds }
 
     ch_versions = ch_versions.mix(LONGSTITCH.out.versions)
 
-    QC(inputs, in_reads, scaffolds, ch_aln_to_ref, meryl_kmers)
+    QC(inputs, ont_reads, hifi_reads, scaffolds, ch_aln_to_ref, meryl_kmers)
 
     ch_versions = ch_versions.mix(QC.out.versions)
 
